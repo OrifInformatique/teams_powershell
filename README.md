@@ -6,7 +6,7 @@ Actually this Script can:
 
 ## Know bugs
 - Sometime, Users can't change role and become Owner, probably the API
-- 
+- The typo in the terminal who open can be incorrect 
 
 ## Todo
 - Add the planner with the script to a new tab
