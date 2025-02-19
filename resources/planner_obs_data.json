@@ -1,0 +1,403 @@
+{
+    "Semaine 1 : Accueil & Bureautique": [
+        {
+            "title": "Information",
+            "description": "Prendre connaissance des informations générales concernant la section informatique",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/KMpMNC3WirSMsMM",
+                    "alias": "Accueil & Information"
+                },
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/TtqewKfgFpaGLtp",
+                    "alias": "Formulaire d'auto-évaluation"
+                }
+            ],
+            "checklist": [
+                "Prendre connaissance des règles en section",
+                "Ajuster votre place de travail selon les recommandations",
+                "Créer les dossiers dans votre espace personnel",
+                "Effectuer les recherches sur les métiers de l'informatique",
+                "Remplir le fichier d'auto-évaluation"
+            ]
+        },
+        {
+            "title": "Outlook",
+            "description": "Utilisation de la boîte mail et du calendrier",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/EMSyxeqaQ3HeLzZ",
+                    "alias": "Outlook"
+                }
+            ],
+            "checklist": [
+                "Créer une signature",
+                "Envoyer un mail aux formateurs",
+                "Créer des rendez-vous dans le calendrier",
+                "Partager votre calendrier avec les formateurs et votre répondant-e social-e",
+                "Synchroniser votre bôite mail sur votre téléphone"
+            ]
+        },
+        {
+            "title": "Captures d'écran",
+            "description": "Utilisation d'un outil de capture d'écran",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/QZ8fbJe9wYrz2Km",
+                    "alias": "Captures d'écran"
+                }
+            ],
+            "checklist": [
+                "Envoyer le mail avec les captures demandées aux formateurs"
+            ]
+        },
+        {
+            "title": "Dactylographie",
+            "description": "Rapidité et précision dans la frappe au clavier",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/RNYZk89pDnPJeJ2",
+                    "alias": "Dactylographie"
+                }
+            ],
+            "checklist": [
+                "Résultat transmis au formateur",
+                "Entrainement planifié si nécessaire",
+                "30 mots/minute et 90% de précision atteint"
+            ]
+        },
+        {
+            "title": "Evaluations",
+            "description": "Evaluation du niveau de math, anglais et de raisonnement logique. Votre formateur et les enseignants vont vous communiquer les modalités de ces évaluations",
+            "references": [
+                
+            ],
+            "checklist": [
+                "Evaluation de math effectuée",
+                "Evaluation d'anglais effectuée",
+                "Evaluation de raisonnement logique effectuée"
+            ]
+        },
+        {
+            "title": "Stand-Up et colloque de section",
+            "description": "Participer au Stand-up et au Colloque de section",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/Fycgxf6MHKYat9f",
+                    "alias": "Stand-Up et colloque"
+                }         
+            ],
+            "checklist": [
+                "Participer à un Stand-Up",
+                "Préparer un sujet de colloque",
+                "Présenter le sujet de colloque au formateur"
+            ]
+        },
+        {
+            "title": "Offre pour une PME",
+            "description": "Réaliser une petite offre comparative de trois ordinateurs",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/GAwm2ztrEKnNoza",
+                    "alias": "Offre PME - 3 laptops"
+                }
+            ],
+            "checklist": [
+                
+            ]
+        }
+    ],
+    "Semaine 2 : Poste de travail": [
+        {
+            "title": "Le matériel",
+            "description": "Notions de base sur le matériel informatique",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/n2DkWXwZmMpAMHq",
+                    "alias": "Notions de base: matériel"
+                }
+            ],
+            "checklist": [
+                "Document prêt dans Teams",
+                "Contrôle par un formateur" 
+            ]
+        },
+        {
+            "title": "Montage d'un PC",
+            "description": "Montage d'un ordinateur",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/os2dsXytkodn3Qt",
+                    "alias": "Montage d'un PC"
+                }
+            ],
+            "checklist": [
+                "Réponses aux questions envoyées aux formateurs",
+                "Contrôle par un formateur"
+            ]
+            
+        },
+        {
+            "title": "Connaissances générales",
+            "description": "Connaissances générales",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/iZLY3xGNSDgRXyE",
+                    "alias": "Notions de base: connaissances générales"
+                }
+            ],
+            "checklist": [
+                "Document prêt dans Teams",
+                "Contrôle par un formateur" 
+            ]
+                    },
+        {
+            "title": "Installation de Windows",
+            "description": "Installation d'un système d'exploitation",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/tnysnYZtcMBKzM9",
+                    "alias": "Installation de Windows"
+                }
+            ],
+            "checklist": [
+                "Compléter la documentation de l'exercice précédent",
+                "Contrôle par un formateur" 
+            ]
+                    },
+        {
+            "title": "Démontage d'un PC",
+            "description": "Démontage d'un ordinateur",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/HTEEXDCoRWxKJRj",
+                    "alias": "Démontage d'un PC"
+                }
+            ],
+            "checklist": [
+                "Ranger tous les composants",
+                "Contrôle par un formateur" 
+            ]
+        }
+    ],
+    "Semaine 3 : Programmation": [
+        {
+            "title": "Programmation Python",
+            "description": "Programmation Python",
+            "references": [
+                {
+                    "url": "https://sectioninformatique.ch/python-introduction/",
+                    "alias": "Python"
+                }
+            ],
+            "checklist": [
+                "Connexion au site avec login \"Pomy\" et mot de passe \"OrifInfo2009\"",
+                "Exercices module 1, chapitre 1",
+                "Exercices module 1, chapitre 2",
+                "Exercices module 1, chapitre 3",
+                "Exercices module 1, chapitre 4",
+                "Evaluation module 1",
+                "Exercices module 2",
+                "Evaluation module 2"
+            ]
+                    },
+        {
+            "title": "HTML-CSS",
+            "description": "Créer une page web et la mettre en forme",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/axScG7ART56FCre",
+                    "alias": "HTML-CSS"
+                }
+            ],
+            "checklist": [
+                "Compléter la partie HTML",
+                "Compléter la partie CSS",
+                "Compléter la partie Bootstrap"
+            ]
+            
+        }
+    ],
+    "Semaine 4 : Périphériques et logiciels": [
+        {
+            "title": "Installation de périphérique",
+            "description": "Installer une imprimante Wifi, des haut-parleurs Bluetooth et un scanner",
+            "references": [
+                {
+                    "url": "https://orif.ch",
+                    "alias": "Installation de périphérique"
+                }
+            ],
+            "checklist": [
+                "Installer l'imprimante Wifi",
+                "Installer les haut-parleurs Bluetooth",
+                "Installer le scanner",
+                "Contrôle par un formateur"
+            ]
+        },
+        {
+            "title": "Schéma avec Draw.IO",
+            "description": "Créer un schéma physique de la section avec le logiciel Draw.IO",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/jbgpqHsbcFpf2L2",
+                    "alias": "Schéma avec Draw.IO"
+                }
+                         ],
+            "checklist": [
+                "Créer un schéma physique",
+                "Inclure les tables, portes et armoires",
+                "Inclure les ordinateurs, imprimantes et bornes wifi",
+                "Inclure les prises réseaux et les prises électriques",
+                "Contrôle par un formateur"
+            ]          
+        },
+                  
+        {
+            "title": "Caméra IP",
+            "description": "Installer une caméra IP",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/kcSEaC7DMgyf8XG",
+                    "alias": "Caméra IP"
+                }
+                         ],
+            "checklist": [
+                "Contrôle par un formateur"
+            ]          
+        },
+		{
+            "title": "Imprimante 3D",
+            "description": "Réaliser une impression 3D",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/WJtzNKJpPb6yKWF",
+                    "alias": "Imprimante 3D"
+                }
+                         ],
+            "checklist": [
+                "Contrôle par un formateur"
+            ]          
+        },
+        {
+            "title": "Retouche d'images",
+            "description": "Se familiariser avec un logiciel de retouche d'image",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/LpMneEbD4SoWCBF",
+                    "alias": "Retouche d'image"
+                }
+                         ],
+            "checklist": [
+                "Se renseigner sur les différents types d'images",
+                "Effectuer des modifications simples",
+                "Effectuer les recherches sur les différents format",
+                "Détourer une image",
+                "Contrôle par un formateur"
+            ]          
+        }
+
+
+        
+    ],
+    "Semaine 5 : Sécurité & réseau": [
+        {
+            "title": "Mot de passe",
+            "description": "Apprendre à gérer des mots de passe",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/wPikE8QQ8QimpND",
+                    "alias": "Mots de passe"
+                }
+                         ],
+            "checklist": [
+                "Document rendu",
+                "Bitwarden installé",
+                "Contrôle par un formateur"
+            ]  
+        },
+        {
+            "title": "Créer un petit réseau",
+            "description": "Créer un petit réseau avec un ordinateur client et un serveur",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/eGEg8gBMaSg82ze",
+                    "alias": "Client-Serveur"
+                }
+                         ],
+            "checklist": [
+                "Document RAID ",
+                "Serveur installé & nommé",
+                "Service AD, DNS et DHCP installé",
+                "Poste client installé",
+                "Comptes et groupes créés dans l'active directory",
+                "Partage de fichier créés",
+                "Imprimante installée",
+                "Document rendu aux formateurs",
+                "Contrôle par un formateur"
+            ]  
+        },
+        {
+            "title": "Sauvegardes",
+            "description": "Apprendre à sécuriser des données à l'aide de sauvegardes",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/eNLnoPmeTQiZjBs",
+                    "alias": "Sauvegarde"
+                }
+                         ],
+            "checklist": [
+                "Installer et configurer Cobian Backup",
+                "Contrôle par un formateur"
+            ]  
+        },
+        {
+            "title": "Outils de base",
+            "description": "Découvrir quelques outils de base pour diagnostiquer ou résoudre des problèmes",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/X8TK38xfmfASwme",
+                    "alias": "Outils de base"
+                }
+                         ],
+            "checklist": [
+                "Présentation Powerpoint prête",
+                "Présentation faîte à un formateur"
+            ]  
+        },
+        {
+            "title": "Pare-feu et antivirus",
+            "description": "Configurer un pare-feu et installer un antivirus",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/8cedNAsbXmqbKEC",
+                    "alias": "Pare-feu et antivirus"
+                }
+                         ],
+            "checklist": [
+                "Ajouter les règles dans le pare-feu",
+                "Antivirus installé & scan planifié",
+                "Contrôle par un formateur"
+            ]  
+        }
+    ],
+    "Semaine 6 : Support": [
+        {
+            "title": "Formation Helpdesk",
+            "description": "Introduction au rôle de technicien Helpdesk et prise en main du Helpdesk de Pomy",
+            "references":[
+                {
+                    "url":"https://kb.sectioninformatique.ch/books/formation/page/introduction-au-role-de-technicien-helpdesk",
+                    "alias":"Helpdesk"
+                }
+                        ],
+            "checklist": [
+                "Lire l'introduction au rôle de technicien Helpdesk",
+                "Terminer l'étape 1 de la formation",
+                "Terminer l'étape 2 de la formation",
+                "Terminer l'étape 3 de la formation",
+                "Terminer l'étape 4 de la formation"
+            ]
+        }
+    ]
+}
