@@ -7,11 +7,13 @@ $path_module_checks = Join-Path $PSScriptRoot "..\modules\checks.psm1"
 $path_module_module_manager = Join-Path $PSScriptRoot "..\modules\module_manager.psm1"
 $path_module_teams_users = Join-Path $PSScriptRoot "..\modules\teams_users.psm1"
 $path_module_teams_planner = Join-Path $PSScriptRoot "..\modules\teams_planner.psm1"
+$path_module_teams_tabs = Join-Path $PSScriptRoot "..\modules\teams_tabs.psm1"
 
 Import-Module $path_module_checks
 Import-Module $path_module_module_manager
 Import-Module $path_module_teams_users
 Import-Module $path_module_teams_planner
+Import-Module $path_module_teams_tabs
 
 # Required modules for this script
 [string[]]$required_modules = @(
@@ -132,100 +134,23 @@ New-MgTeamChannel -TeamId $($mg_created_team.id) -BodyParameter $request_body_pr
 
 
 # ######################### Add Tabs to Channels #########################
-# # This is done like that because Teams requires secure URLs for any content it renders in tabs.
+try {
+    $excel_path = Join-Path $PSScriptRoot "..\resources\_Modele_HoraireTeams.xlsx"
+    $channel_id = (Get-MgTeamChannel -TeamId $mg_created_team.id | Where-Object { $_.DisplayName -eq "Général" }).Id
+    
+    $result = Add-ExcelTabToChannel `
+        -TeamId $mg_created_team.id `
+        -ChannelId $channel_id `
+        -ExcelFilePath $excel_path `
+        -TabName "Horaire"
 
-# $mg_group_site = Wait-ApiResponse -max_sec_wait 30 -api_request {
-# 	# Get the SharePoint site associated with the team
-# 	Get-MgGroupSite -GroupId $mg_created_team.id -SiteId "root"
-# }
-
-# Write-Host "Site ID: $($mg_group_site.Id)" -ForegroundColor Green # DEBUG
-# $request_body_new_tabs = New-Object -TypeName System.Collections.ArrayList
-
-# if ($mg_group_site) {
-# 	# Get the document library (drive) ID
-# 	$mg_site_drive = Wait-ApiResponse -max_sec_wait 30 -api_request {
-# 		Get-MgSiteDrive -SiteId $mg_group_site.Id
-# 	}
-
-# 	if ($mg_site_drive){
-
-# 		#### Test #### # DEBUG
-# 		# [Pomy] Dufey Killian
-
-# 		Write-Host "Site Drive ID: $($mg_site_drive.Id)" -ForegroundColor Green # DEBUG
-		
-# 		Write-Host "Get-MgDrive ========================================"
-# 		$mg_drive = Get-MgDrive -DriveId $($mg_site_drive.Id)
-# 		Write-Host "Drive ID: $($mg_drive.Id)" -ForegroundColor Green # DEBUG
-# 		$mg_drive
-
-# 		Write-Host "Get-MgDriveItem of mg_drive ========================================"
-# 		# Get-MgDriveItem -DriveId $($mg_site_drive.Id) -Filter "name eq 'Documents'" -Property "id,webUrl"
-# 		Get-MgDriveItem -DriveId $($mg_drive.Id) -Filter "name eq 'Documents'"
-		
-# 		Write-Host "Get-MgDriveItem of mg_drive_item ========================================"
-# 		$mg_drive_item = Get-MgDriveItem -DriveId $($mg_site_drive.Id) -Filter "name eq 'Documents'"
-# 		Write-Host "Drive Item ID: $($mg_drive_item.Id)" -ForegroundColor Green # DEBUG
-# 		$mg_drive_item
-
-
-# 		# [string]$file_path = "\\srv-sec\formation\Administratif\LogoEtModeles"
-# 		# [string]$file_path = "C:\_Programmation_Local\PowerShell\Teams_Creation"
-# 		# [string]$file_name = "_Modele_HoraireTeams.xlsx"
-# 		# [string]$full_file_path = Join-Path -Path $file_path -ChildPath $file_name
-		
-# 		[string]$full_file_path = "C:\_Programmation_Local\PowerShell\Teams_Creation\_Modele_HoraireTeams.xlsx"
-# 		[string]$file_name = [System.IO.Path]::GetFileName($full_file_path)
-
-# 		if (-Not (Test-Path $full_file_path)) {
-# 			Write-Host "File not found: $full_file_path" -ForegroundColor Red
-# 			return
-# 		}
-# 		Write-Host "File path: $full_file_path" -ForegroundColor Magenta # DEBUG
-		
-# 		# Upload the file to the SharePoint document library
-# 		$file_stream = [System.IO.File]::OpenRead($full_file_path)
-
-# 		try {
-# 			$uploaded_file = New-MgDriveItem -DriveId $($mg_drive_item.Id) -Name $file_name -File @{ Content = $file_stream }
-# 			Write-Host "File uploaded successfully!" -ForegroundColor Green
-# 			Write-Host "File Name: $($uploaded_file)"
-# 			Write-Host "Web URL: $($uploaded_file)"
-# 		} catch {
-# 			Write-Host "Error uploading file: $_" -ForegroundColor Red
-# 			Write-Host "Drive ID: $($mg_drive.Id)" -ForegroundColor Red
-# 			Write-Host "File Name: $file_name" -ForegroundColor Red
-# 			Write-Host "File Stream: $file_stream" -ForegroundColor Red
-# 		} finally {
-# 			$file_stream.Close()
-# 		}
-		
-# 		if ($uploaded_file) {
-
-# 			# Get the URL of the uploaded file
-# 			$excel_schedule_url = $uploaded_file.WebUrl
-			
-# 			# TODO: Horaire (App Excel)
-# 			[void]$request_body_new_tabs.Add(	
-# 				@{
-# 					displayName = "Horaire"
-# 					"teamsApp@odata.bind" = "https://graph.microsoft.com/v1.0/appCatalogs/teamsApps/com.microsoft.teamspace.tab.file.staticviewer.excel"
-# 					configuration = @{
-# 						entityId = ""
-# 						contentUrl = $excel_schedule_url
-# 						removeUrl = ""
-# 						websiteUrl = $excel_schedule_url
-# 					}
-# 				}
-# 			)
-# 		}
-# 	} else {
-# 		Write-Host "No response received when searching the Drive, you will need to add the the files manually" -ForegroundColor Red
-# 	}
-# } else {
-# 	Write-Host "No response received when searching the Sharepoint, you will need to add the the files manually" -ForegroundColor Red
-# }
+    if ($result) {
+        Write-Host "Excel tab added successfully" -ForegroundColor Green
+    }
+}
+catch {
+    Write-Host "Failed to add Excel tab: $_" -ForegroundColor Red
+}
 
 
 ######################### Add plans and tasks to the Planner Apps #########################
