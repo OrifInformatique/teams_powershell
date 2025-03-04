@@ -9,29 +9,29 @@ Set-StrictMode -Version latest
 # If none, 
 if ($null -eq $graph_modules){
     
-    Write-Host " Microsoft Graph modules are not installed." -ForegroundColor Red
+    Write-Host "Microsoft Graph modules are not installed." -ForegroundColor Red
     
     # Ask the user if he want to install the modules (NOT case sensitive)
     [string]$user_input = ""
     while ($user_input -ne "Y" -and $user_input -ne "N") {
-        $user_input = Read-Host -Prompt " Do you want to install them [Y/N]"
+        $user_input = Read-Host -Prompt "Do you want to install them [Y/N]"
     }
 
     # Yes => Install Microsoft Graph modules (need admin right)
     if ($user_input -eq "Y") {
         try {
-            Write-Host " The install of all Microsoft Graph modules started, it will take some time... (wait for the confirmation message)"
+            Write-Host "The install of all Microsoft Graph modules started, it will take some time... (wait for the confirmation message)"
 
             Install-Module Microsoft.Graph -Force -ErrorAction Stop
 
-            Write-Host " Microsoft Graph modules have been installed." -ForegroundColor Green
+            Write-Host "Microsoft Graph modules have been installed." -ForegroundColor Green
         } catch {
-            Write-Host " An error occurred during installation: $_" -ForegroundColor Red
+            Write-Host "An error occurred during installation: $_" -ForegroundColor Red
         }
     }
     # No => Exit the script
     else {
-        Write-Host " Exiting script..." -ForegroundColor Yellow
+        Write-Host "Exiting script..." -ForegroundColor Yellow
         exit
     }
     
@@ -39,11 +39,11 @@ if ($null -eq $graph_modules){
     Get-InstalledModule Microsoft.Graph.*
 }
 else {
-    Write-Host " Microsoft Graph modules are already installed." 
+    Write-Host "Microsoft Graph modules are already installed." 
 
     # Display all modules from Microsoft Graph
     Get-InstalledModule Microsoft.Graph.*
 }
 
-Write-Host " Press any key to continue..."
+Write-Host "Press any key to continue..."
 [console]::ReadKey($true).Key

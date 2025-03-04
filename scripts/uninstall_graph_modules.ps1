@@ -8,17 +8,17 @@ Set-StrictMode -Version latest
 
 # Check if any modules are found
 if ($graph_modules) {
-    Write-Host " The uninstall of all Microsoft Graph modules started, it will take some time... (wait for the confirmation message)"
+    Write-Host "The uninstall of all Microsoft Graph modules started, it will take some time... (wait for the confirmation message)"
 
     #Then uninstall all modules found
     foreach ($module in $graph_modules) {
-        Write-Host " Uninstalling module: $($module.Name)" -ForegroundColor Yellow
+        Write-Host "Uninstalling module: $($module.Name)" -ForegroundColor Yellow
         Uninstall-Module -Name $module.Name -AllVersions -Force
     }
-    Write-Host " All Microsoft.Graph modules have been uninstalled." -ForegroundColor Green
+    Write-Host "All Microsoft.Graph modules have been uninstalled." -ForegroundColor Green
 } else {
-    Write-Host " No Microsoft.Graph modules are installed." -ForegroundColor Red
+    Write-Host "No Microsoft.Graph modules are installed." -ForegroundColor Red
 }
 
-Write-Host " Press any key to continue..."
+Write-Host "Press any key to continue..."
 [console]::ReadKey($true).Key

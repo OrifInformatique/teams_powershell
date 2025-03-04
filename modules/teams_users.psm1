@@ -39,6 +39,8 @@ BEGIN {}
 
 PROCESS {
 
+    $added_member_email = [System.Collections.ArrayList]@()
+
     foreach ($user_email in $array_user_email) {
 
         # Wait to avoid API throttling
@@ -65,8 +67,8 @@ PROCESS {
         [int]$try = 0
         do {
 
-            # ($s is to prevent the display of Member data)
-            $s = New-MgTeamMember -TeamId $team_id -BodyParameter $request_body_new_member 
+            # Discard output to prevent the display of Team data
+            $null = New-MgTeamMember -TeamId $team_id -BodyParameter $request_body_new_member 
             
             # Wait to avoid API throttling
             Start-Sleep -Seconds 1
@@ -77,6 +79,7 @@ PROCESS {
 
             if ($user_found) {
                 Write-Host "User $($user_found.name) added to the team" -ForegroundColor Cyan
+                [void]$added_member_email.Add($user_email)
                 $member_not_added = $false
             }
             if ($try -eq $max_try) {
@@ -85,6 +88,7 @@ PROCESS {
             }
         } while ($member_not_added)
     }
+    return $added_member_email
 }
 
 END {}
@@ -163,7 +167,7 @@ PROCESS {
                 [void]$team_members_id.Add($mg_member.Id)
             }
         } else {
-            Write-Host "No User ID found for member: $($mg_members.Id)" -ForegroundColor Red
+            Write-Host "No User ID found for member: $($mg_member.Id)" -ForegroundColor Red
         }
     }
 
@@ -217,8 +221,8 @@ PROCESS {
             # Wait to avoid API throttling
             Start-Sleep -Seconds 1
             
-            # Update the user's role in the team ($s is to prevent the display of Member data)
-            $s = New-MgTeamMember -TeamId $team_id -BodyParameter $request_body
+            # Discard output to prevent the display of Team data
+            $null = New-MgTeamMember -TeamId $team_id -BodyParameter $request_body
 
             # Wait to avoid API throttling
             Start-Sleep -Seconds 1
@@ -285,8 +289,8 @@ BEGIN {}
 
 PROCESS {
 
-    Add-MembersToTeam -team_id $team_id -array_user_email $array_user_email
-    Edit-UsersRole -team_id $team_id -array_user_email $array_user_email -target_role "owner"
+    [string[]]$added_member_email = Add-MembersToTeam -team_id $team_id -array_user_email $array_user_email
+    Edit-UsersRole -team_id $team_id -array_user_email $added_member_email -target_role "owner"
     
 }
 
@@ -333,8 +337,8 @@ BEGIN {}
 
 PROCESS {
 
-    Add-MembersToTeam -team_id $team_id -array_user_email $array_user_email
-    Edit-UsersRole -team_id $team_id -array_user_email $array_user_email -target_role "guest"
+    [string[]]$added_member_email = Add-MembersToTeam -team_id $team_id -array_user_email $array_user_email
+    Edit-UsersRole -team_id $team_id -array_user_email $added_member_email -target_role "guest"
     
 }
 
@@ -421,45 +425,15 @@ END {}
 
 
 function Find-UserInOrganization {
-    	<#
-    .SYNOPSIS
-        # Try to find a user in the organization
-        # Required scope => User.Read.All | Directory.Read.All
-    .NOTES
-        Name: Find-UserInOrganization
-        Author: Jocelin THUMELIN
-        Version: 1.0
-        DateCreated: 10.12.2024
-     
-    .PARAMETER user_email_or_name
-        (Required) Email or Full name of the user to find
-
-    .EXAMPLE
-        Find-UserInOrganization -user_email_or_name "newuser@email.com"
-     
-    .INPUTS
-        String
-        
-    .OUTPUTS
-        [PSCustomObject]@{
-            id = Id
-            email = UserPrincipalName
-            name = DisplayName
-        }
-
-        Or
-
-        Null
-
-    .LINK
-        https://www.sectioninformatique.ch
-    #>
-	[CmdletBinding()]
-	param (
-		[string]$user_email_or_name
-	)
-	
-BEGIN {}
+    [CmdletBinding()]
+    param (
+        [string]$user_email_or_name
+    )
+    
+BEGIN {
+    # Trim and convert to lowercase for comparison
+    $search_term = $user_email_or_name.Trim().ToLower()
+}
 
 PROCESS {
     $mg_list_all_users = Get-MgUser -Property "Id,UserPrincipalName,DisplayName"
@@ -467,8 +441,8 @@ PROCESS {
     # Check if the email exist in the organization
     foreach ($mg_user in $mg_list_all_users){
         
-        # TODO: Refactor -> Find the user with only the name and display a menu if there is more than 1 result
-        if ($mg_user.UserPrincipalName -eq $user_email_or_name -or $mg_user.DisplayName -eq $user_email_or_name) {
+        if ($mg_user.UserPrincipalName.ToLower() -eq $search_term -or 
+            $mg_user.DisplayName.ToLower() -eq $search_term) {
 
             return [PSCustomObject]@{
                 id = $mg_user.Id
@@ -477,6 +451,19 @@ PROCESS {
             }
         }
     }
+
+    # If exact match fails, try partial match on DisplayName
+    foreach ($mg_user in $mg_list_all_users){
+        if ($mg_user.DisplayName.ToLower().Contains($search_term)) {
+            Write-Host "Found partial match: $($mg_user.DisplayName)" -ForegroundColor Yellow
+            return [PSCustomObject]@{
+                id = $mg_user.Id
+                email = $mg_user.UserPrincipalName
+                name = $mg_user.DisplayName
+            }
+        }
+    }
+    
     return $null
 }
 

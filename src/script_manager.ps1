@@ -13,7 +13,6 @@ $path_module_menu = Join-Path $PSScriptRoot "..\modules\menu.psm1"
 $path_script_install_graph_modules = Join-Path $PSScriptRoot "..\scripts\install_graph_modules.ps1"
 $path_script_uninstall_graph_modules = Join-Path $PSScriptRoot "..\scripts\uninstall_graph_modules.ps1"
 
-# $path_script_connect_graph = Join-Path $PSScriptRoot "..\scripts\connect_graph.ps1"
 $path_script_create_team = Join-Path $PSScriptRoot "..\scripts\create_team.ps1"
 
 # Custom Modules
@@ -23,8 +22,8 @@ Import-Module $path_module_menu
  # Stop the script if the user don't have admin right
 if (-not (Find-UserHasAdminRights)) {
     Clear-Host
-    Write-Host " You do not have administrative rights. Please run this script as an Administrator." -ForegroundColor Red
-    Write-Host " Press any key to exit script..."
+    Write-Host "You do not have administrative rights. Please run this script as an Administrator." -ForegroundColor Red
+    Write-Host "Press any key to exit script..."
     [console]::ReadKey($true).Key
     exit
 }

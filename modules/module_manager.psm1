@@ -36,10 +36,10 @@ function Find-MissingRequiredModules {
     BEGIN {}
 
     PROCESS {       
-        Write-Host " Checking for missing required modules"
+        Write-Host "Checking for missing required modules"
         
         if ($null -eq $array_required_modules) {
-            Write-Host " No required Array passed in params" -ForegroundColor Red
+            Write-Host "No required Array passed in params" -ForegroundColor Red
             return
         }
 
@@ -48,7 +48,7 @@ function Find-MissingRequiredModules {
 
         # Loop trought the passed array of module name
         for ($i = 0; $i -lt $array_size; $i++) {
-            # Write-Host " Checking module: $($array_required_modules[$i])" 
+            # Write-Host "Checking module: $($array_required_modules[$i])" 
 
             [System.Object]$installed_module = Get-InstalledModule -Name "$($array_required_modules[$i])" -ErrorAction SilentlyContinue
             
@@ -56,7 +56,7 @@ function Find-MissingRequiredModules {
             if ($null -eq $installed_module){
                 # Cast [void] type to don't get return index
                 [void]$return_array.Add($array_required_modules[$i])
-                # Write-Host " Missing modules: $($array_required_modules[$i])" -ForegroundColor Yellow
+                # Write-Host "Missing modules: $($array_required_modules[$i])" -ForegroundColor Yellow
             }
         }
         return $return_array.ToArray()
@@ -101,22 +101,22 @@ PROCESS {
 
     
     if ($null -eq $array_modules) {
-        Write-Host " There is no module to install" -ForegroundColor Yellow
+        Write-Host "There is no module to install" -ForegroundColor Yellow
         return
     }
 
     # Loop trought the passed array of module name
     for ($i = 0; $i -lt $array_modules.Length; $i++) {
         try {
-            Write-Host " The install of the module: $($array_modules[$i]) started, it will take some time..."
+            Write-Host "The install of the module: $($array_modules[$i]) started, it will take some time..."
 
             Install-Module $($array_modules[$i]) -Force -ErrorAction Stop
 
         } catch {
-            Write-Host " An error occurred during install: $_" -ForegroundColor Red
+            Write-Host "An error occurred during install: $_" -ForegroundColor Red
             EXIT 1
         }
-        Write-Host " Modules: $($array_modules[$i]) has been installed." -ForegroundColor Green
+        Write-Host "Modules: $($array_modules[$i]) has been installed." -ForegroundColor Green
     }
 }
 
@@ -158,22 +158,22 @@ BEGIN {}
 PROCESS {
 
     if ($null -eq $array_modules) {
-        Write-Host "There is no module to uninstall" -ForegroundColor Yellow
+        Write-Host "here is no module to uninstall" -ForegroundColor Yellow
         return
     }
 
     # Loop trought the passed array of module name
     for ($i = 0; $i -lt $array_modules.Count; $i++) {
         try {
-            Write-Host " The uninstall of the module: $($array_modules[$i]) started, it will take some time..."
+            Write-Host "The uninstall of the module: $($array_modules[$i]) started, it will take some time..."
 
             Uninstall-Module -Name $($array_modules[$i]) -AllVersions -Force
 
         } catch {
-            Write-Host " An error occurred during uninstall: $_" -ForegroundColor Red
+            Write-Host "An error occurred during uninstall: $_" -ForegroundColor Red
             EXIT 1
         }
-        Write-Host " Modules: $($array_modules[$i]) has been uninstalled." -ForegroundColor Green
+        Write-Host "Modules: $($array_modules[$i]) has been uninstalled." -ForegroundColor Green
     }
 }
 

@@ -5,12 +5,12 @@ Set-StrictMode -Version latest
 # Import Custom modules
 $path_module_checks = Join-Path $PSScriptRoot "..\modules\checks.psm1"
 $path_module_module_manager = Join-Path $PSScriptRoot "..\modules\module_manager.psm1"
-$path_module_teams = Join-Path $PSScriptRoot "..\modules\teams.psm1"
+$path_module_teams_users = Join-Path $PSScriptRoot "..\modules\teams_users.psm1"
 $path_module_teams_planner = Join-Path $PSScriptRoot "..\modules\teams_planner.psm1"
 
 Import-Module $path_module_checks
 Import-Module $path_module_module_manager
-Import-Module $path_module_teams
+Import-Module $path_module_teams_users
 Import-Module $path_module_teams_planner
 
 # Required modules for this script
@@ -33,7 +33,6 @@ Install-RequiredModules -array_modules $missing_modules
 [string]$scopes_group = "Group.ReadWrite.All"
 [string]$scopes_teams = "TeamSettings.Read.All", "TeamMember.ReadWriteNonOwnerRole.All", "TeamMember.ReadWrite.All"
 [string]$scopes_planner = "Tasks.ReadWrite", "DeviceManagementApps.Read.All"
-# [string]$scopes_files = ""
 [string]$scopes_files = "Files.ReadWrite.All"
 [string]$scopes_all = $scopes_global + " " + $scopes_group + " " + $scopes_teams + " " + $scopes_planner + " " + $scopes_files
 
@@ -109,8 +108,8 @@ $request_body_new_team = @{
 	}
 }
 
-# ($s is to prevent the display of Team data)
-$s = New-MgTeam -BodyParameter $request_body_new_team
+# Discard output to prevent the display of Team data
+$null = New-MgTeam -BodyParameter $request_body_new_team
 
 $mg_created_team = Wait-ApiResponse -max_sec_wait 30 -api_request {
     Get-MgTeam -Filter "displayName eq '$($mg_user.name)'" -Property "id,description"
@@ -231,10 +230,10 @@ New-MgTeamChannel -TeamId $($mg_created_team.id) -BodyParameter $request_body_pr
 
 ######################### Add plans and tasks to the Planner Apps #########################
 # Load the JSON file into a PowerShell object
-$jsonFilePath = Join-Path $PSScriptRoot "..\resources\planner_obs_data.json"
-$jsonFilePathSettings = Join-Path $PSScriptRoot "..\resources\planner_obs_settings.json"
+$json_file_path = Join-Path $PSScriptRoot "..\resources\planner_obs_data.json"
+$json_file_path_settings = Join-Path $PSScriptRoot "..\resources\planner_obs_settings.json"
 
-New-OrifTasks -mg_user $mg_user -mg_team $mg_created_team -bucketsAndTasksJSON $jsonFilePath -settingsJSON $jsonFilePathSettings
+New-OrifTasks -mg_user $mg_user -mg_team $mg_created_team -bucketsAndTasksJSON $json_file_path -settingsJSON $json_file_path_settings
 
 
 ######################### Add Owner and Apprentice to the Team #########################
@@ -246,7 +245,7 @@ $list_owners = @(
 	"sven.kohler@sectioninformatique.ch",
 	"teresa.valente@sectioninformatique.ch",
 	"frederic.schmocker@sectioninformatique.ch"
-	)
+)
 
 Start-Sleep -Seconds 1
 	
@@ -257,7 +256,7 @@ Add-MembersToTeam -team_id $($mg_created_team.id) -array_user_email $($mg_user.e
 # Disconnect from Microsoft Graph end of script
 Disconnect-MgGraph    
 
-Write-Host "Pess any key to continue..."
+Write-Host "Press any key to continue..."
 [console]::ReadKey($false).Key
 
 

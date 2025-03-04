@@ -47,13 +47,13 @@ function New-Menu {
             }
             ($move_menu_selector_exit_keys -contains $key_pressed) { 
                 Clear-Host
-                Write-Host " Exiting Menu..." -ForegroundColor Yellow
+                Write-Host "Exiting Menu..." -ForegroundColor Yellow
                 $in_menu = $false
                 return 0
                 break 
             }
             default { 
-                Write-Host " Error in menu" -ForegroundColor Red
+                Write-Host "Error in menu" -ForegroundColor Red
                 # Write-Host "You pressed: $($key_pressed)"
                 break 
             }

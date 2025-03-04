@@ -97,12 +97,12 @@ PROCESS {
         }
 
         $current_sec += $delay
-        Write-Host " Waiting API response: $($current_sec) sec"
+        Write-Host "Waiting API response: $($current_sec) sec"
 
     } while ($null -eq $($api_response) -and $current_sec -lt $max_sec_wait)
         
     if ($null -eq $($api_response)) {
-        Write-Host " Timed out ($max_sec_wait sec) No response from API" -ForegroundColor Red
+        Write-Host "Timed out ($max_sec_wait sec) No response from API" -ForegroundColor Red
         return $null
     }
 
