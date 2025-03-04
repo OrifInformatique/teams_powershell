@@ -13,7 +13,7 @@ $path_module_menu = Join-Path $PSScriptRoot "..\modules\menu.psm1"
 $path_script_install_graph_modules = Join-Path $PSScriptRoot "..\scripts\install_graph_modules.ps1"
 $path_script_uninstall_graph_modules = Join-Path $PSScriptRoot "..\scripts\uninstall_graph_modules.ps1"
 
-$path_script_create_team = Join-Path $PSScriptRoot "..\scripts\create_team.ps1"
+$path_script_create_team_observator= Join-Path $PSScriptRoot "..\scripts\create_team_observator.ps1"
 
 # Custom Modules
 Import-Module $path_module_checks
@@ -30,7 +30,7 @@ if (-not (Find-UserHasAdminRights)) {
 
 # Add script description and script path here:
 $scripts_menu = New-Object $dict_t
-$scripts_menu.Add("Créer une nouvelle Team pour une personne en Observation", $path_script_create_team)
+$scripts_menu.Add("Créer une nouvelle Team pour une personne en Observation", $path_script_create_team_observator)
 $scripts_menu.Add("Installer tous les modules de Microsoft Graph", $path_script_install_graph_modules)
 $scripts_menu.Add("Désinstaller tous les modules de Microsoft Graph", $path_script_uninstall_graph_modules)
 $scripts_menu.Add("Exit menu", 0) # 0 stop the menu loop
