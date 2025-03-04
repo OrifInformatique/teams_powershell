@@ -236,7 +236,7 @@ $json_file_path_settings = Join-Path $PSScriptRoot "..\resources\planner_obs_set
 New-OrifTasks -mg_user $mg_user -mg_team $mg_created_team -bucketsAndTasksJSON $json_file_path -settingsJSON $json_file_path_settings
 
 
-######################### Add Owner and Apprentice to the Team #########################
+######################### Add Owner and Observator to the Team #########################
 # List of Owners email of the new team
 $list_owners = @(
 	"didier.viret@sectioninformatique.ch",
@@ -246,15 +246,17 @@ $list_owners = @(
 	"teresa.valente@sectioninformatique.ch",
 	"frederic.schmocker@sectioninformatique.ch"
 )
-
-Start-Sleep -Seconds 1
 	
 Add-OwnersToTeam -team_id $($mg_created_team.id) -array_user_email $list_owners
 Add-MembersToTeam -team_id $($mg_created_team.id) -array_user_email $($mg_user.email)
-	
 
-# Disconnect from Microsoft Graph end of script
+
+######################### End of the script #########################
 Disconnect-MgGraph    
+
+Write-Host "------------------------------------------" -ForegroundColor Green
+Write-Host "End of the script" -ForegroundColor Green
+Write-Host "------------------------------------------" -ForegroundColor Green
 
 Write-Host "Press any key to continue..."
 [console]::ReadKey($false).Key

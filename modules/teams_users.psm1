@@ -2,253 +2,184 @@
 Set-StrictMode -Version latest
 
 function Add-MembersToTeam {
-	<#
-    .SYNOPSIS
-        # Add Users as Members to a Team
-        # Required scope => TeamMember.ReadWriteNonOwnerRole.All | TeamMember.ReadWrite.All | Group.ReadWrite.All
-     
-    .NOTES
-        Name: Add-MembersToTeam
-        Author: Jocelin THUMELIN
-        Version: 1.0
-        DateCreated: 10.12.2024
-     
-    .PARAMETER team_id
-        (Required) Team where the new user will be added
-		
-    .PARAMETER array_user_email
-        (Required) Users email
-
-    .EXAMPLE
-        Add-MembersToTeam -team_id $team.id -user_email $user.email
-     
-    .INPUTS
-        String
-        Array of String
-        
-    .LINK
-        https://www.sectioninformatique.ch
-    #>
-	[CmdletBinding()]
-	param (
-		[string] $team_id,
-		[string[]] $array_user_email
-	)
-	
-BEGIN {}
-
-PROCESS {
-
-    $added_member_email = [System.Collections.ArrayList]@()
-
-    foreach ($user_email in $array_user_email) {
-
-        # Wait to avoid API throttling
-        Start-Sleep -Seconds 1
-
-        # Check if the User is part of the organization
-        $user_exist = Find-UserInOrganization -user_email_or_name $user_email 
-        if ($null -eq $user_exist) {
-            Write-Host "User: $user_email isn't part of the organization" -ForegroundColor Red
-            continue 
-        }
-
-        # Add the User to the Team as Member
-        Write-Host "Adding new Member: $user_email" -ForegroundColor Cyan
-        $request_body_new_member = @{
-            "@odata.type" = "#microsoft.graph.aadUserConversationMember"
-            roles = @()
-            "user@odata.bind" = "https://graph.microsoft.com/v1.0/users('$($user_email)')"
-        }
-
-        # While loop (limited in number of try) is there in case of API throttling 
-        [bool]$member_not_added = $true
-        [int]$max_try = 5
-        [int]$try = 0
-        do {
-
-            # Discard output to prevent the display of Team data
-            $null = New-MgTeamMember -TeamId $team_id -BodyParameter $request_body_new_member 
-            
-            # Wait to avoid API throttling
-            Start-Sleep -Seconds 1
-
-            $user_found = Find-UserInTeam -user_email_or_name $user_email -team_id $team_id
-
-            $try++
-
-            if ($user_found) {
-                Write-Host "User $($user_found.name) added to the team" -ForegroundColor Cyan
-                [void]$added_member_email.Add($user_email)
-                $member_not_added = $false
-            }
-            if ($try -eq $max_try) {
-                Write-Host "Too many try ($max_try) to add member: $($user_email)" -ForegroundColor Red
-                $member_not_added = $false
-            }
-        } while ($member_not_added)
-    }
-    return $added_member_email
-}
-
-END {}
-}
-
-
-function Edit-UsersRole {
-    <#
-    .SYNOPSIS
-        # Change the role of users
-        # Required scope => TeamMember.ReadWriteNonOwnerRole.All | TeamMember.ReadWrite.All | Group.ReadWrite.All
-     
-    .NOTES
-        Name: Edit-UsersRole
-        Author: Jocelin THUMELIN
-        Version: 1.0
-        DateCreated: 10.12.2024
-     
-    .PARAMETER team_id
-        (Required) Team where the new user will be added
-		
-    .PARAMETER array_user_email
-        (Required) Users email
-
-    .PARAMETER target_role
-        (Required) 	"owner" => max rights
-					"member"=> normal rights
-					"guest"	=> min rights
-    .EXAMPLE
-        Edit-UsersRole -team_id $team.id -user_email $user.email -target_role "owner"
-     
-    .INPUTS
-        String
-        Array of String
-        String
-        
-    .LINK
-        https://www.sectioninformatique.ch
-    #>
-[CmdletBinding()]
+    [CmdletBinding()]
     param (
         [string] $team_id,
+        [string[]] $array_user_email
+    )
+    
+    BEGIN {}
+
+    PROCESS {
+        $added_member_email = [System.Collections.ArrayList]@()
+
+        foreach ($user_email in $array_user_email) {
+            # Initial delay to avoid API throttling
+            Start-Sleep -Seconds 2
+
+            # Check if the User is part of the organization
+            $user_exist = Find-UserInOrganization -user_email_or_name $user_email 
+            if ($null -eq $user_exist) {
+                Write-Host "User: $user_email isn't part of the organization" -ForegroundColor Red
+                continue 
+            }
+
+            # Add the User to the Team as Member
+            Write-Host "Adding new Member: $user_email" -ForegroundColor Cyan
+            $request_body_new_member = @{
+                "@odata.type" = "#microsoft.graph.aadUserConversationMember"
+                roles = @()
+                "user@odata.bind" = "https://graph.microsoft.com/v1.0/users('$($user_email)')"
+            }
+
+            # Retry logic with exponential backoff
+            [bool]$success = $false
+            [int]$max_try = 5
+            [int]$try = 0
+            [int]$delay = 2
+
+            while ($try -lt $max_try -and -not $success) {
+                try {
+                    # Attempt to add the member
+                    $null = New-MgTeamMember -TeamId $team_id -BodyParameter $request_body_new_member -ErrorAction Stop
+                    
+                    # Wait with exponential backoff
+                    Start-Sleep -Seconds $delay
+                    
+                    # Verify member was added
+                    $user_found = Find-UserInTeam -user_email_or_name $user_email -team_id $team_id
+
+                    if ($user_found) {
+                        Write-Host "User: $($user_found.name) added to the team" -ForegroundColor Cyan
+                        [void]$added_member_email.Add($user_email)
+                        $success = $true
+                    }
+                }
+                catch {
+                    $try++
+                    if ($try -lt $max_try) {
+                        Write-Host "Attempt $try failed: $($_.Exception.Message)" -ForegroundColor Yellow
+                        $delay *= 2  # Exponential backoff
+                        Start-Sleep -Seconds $delay
+                    }
+                    else {
+                        Write-Host "Failed to add member after $max_try attempts: $user_email" -ForegroundColor Red
+                    }
+                }
+            }
+        }
+        return $added_member_email
+    }
+
+    END {}
+}
+
+function Edit-UsersRole {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [string] $team_id,
+        [Parameter(Mandatory=$true)]
         [string[]] $array_user_email,
+        [Parameter(Mandatory=$true)]
+        [ValidateSet("owner", "member", "guest")]
         [string] $target_role
     )
     
-BEGIN {}
-
-PROCESS {
-    $possible_roles = @("owner", "member", "guest")
-
-    # Validate the role parameter
-    if (-not $possible_roles.Contains($target_role)) {
-        Write-Host "Invalid role specified: $target_role" -ForegroundColor Red
-        return
+    BEGIN {
+        # Validate input array
+        if ($array_user_email.Count -eq 0) {
+            Write-Host "No users provided to update" -ForegroundColor Yellow
+            return
+        }
     }
 
-    # Array who will hold all Members email and ID of the passed Team
-    $team_members_email = New-Object System.Collections.ArrayList
-    $team_members_id = New-Object System.Collections.ArrayList
+    PROCESS {
+        # Create dictionaries to store member info
+        $member_map = @{}
+        
+        # Get all members email and ID of the Team
+        $mg_team_members = Get-MgTeamMember -TeamId $team_id -All
+        foreach ($mg_member in $mg_team_members) {
+            if (-not ($mg_member.AdditionalProperties -and 
+                     $mg_member.AdditionalProperties.ContainsKey("userId"))) {
+                continue
+            }
 
-    # Get all members email and ID of the Team
-    $mg_team_members = Get-MgTeamMember -TeamId $team_id -All
-    foreach ($mg_member in $mg_team_members) {
-
-        # Check if AdditionalProperties exists and contains userId
-        if ($mg_member.AdditionalProperties -and $mg_member.AdditionalProperties.ContainsKey("userId")) {
             $mg_user_id = $mg_member.AdditionalProperties["userId"]
-
-            # Get the user details
             $mg_user = Get-MgUser -UserId $mg_user_id -Property "UserPrincipalName"
 
-            # Add Team ID and email in a list only if user is in the target list
-            if ($array_user_email.Contains($mg_user.UserPrincipalName)) {
-                [void]$team_members_email.Add($mg_user.UserPrincipalName)
-                [void]$team_members_id.Add($mg_member.Id)
-            }
-        } else {
-            Write-Host "No User ID found for member: $($mg_member.Id)" -ForegroundColor Red
-        }
-    }
-
-    # Verify all requested users were found in the team
-    foreach ($email in $array_user_email) {
-        if (-not $team_members_email.Contains($email)) {
-            Write-Host "User: $email isn't part of the Team" -ForegroundColor Red
-            continue
-        }
-    }
-
-    # Change the role of the user
-    for ($i = 0; $i -lt $array_user_email.Length; $i++) {
-        
-        # Wait to avoid API throttling
-        Start-Sleep -Seconds 1
-                    
-        # Check if the User has already the role wanted
-        $old_role = Find-UserRoleInTeam -user_id "$($team_members_id[$i])" -team_id $team_id
-        if ($old_role -eq $target_role) {
-            Write-Host "$($team_members_email[$i]) has already the role: $old_role " -ForegroundColor Yellow
-            continue
-        }
-        
-        # TODO: Refactor-> Guest role can't be changed, remove and add the user back with the correct role (Use a Switch)
-        # Set parameters for role change, 
-        #  Switch is used because "member" is a empty array in the API request and 
-        #  cause errors if there is an empty variable inside.
-        $request_body = @{
-            "@odata.type" = "#microsoft.graph.aadUserConversationMember"
-            "user@odata.bind" = "https://graph.microsoft.com/v1.0/users('$($team_members_email[$i])')"
-        }
-
-        switch ($target_role) {
-
-            "member" { $request_body.Add("roles", @()) }
-            "owner" { $request_body.Add("roles", @("owner")) }
-            "guest" { $request_body.Add("roles", @("guest")) }
-            
-            Default {
-                Write-Host "Role: $target_role is not a possibility" -ForegroundColor Red
-                return
-            }
-        }
-        
-        # While loop (limited in number of try) is there in case of API throttling 
-        [bool]$role_not_changed = $true
-        [int]$max_try = 5
-        [int]$try = 0
-        do {
-            # Wait to avoid API throttling
-            Start-Sleep -Seconds 1
-            
-            # Discard output to prevent the display of Team data
-            $null = New-MgTeamMember -TeamId $team_id -BodyParameter $request_body
-
-            # Wait to avoid API throttling
-            Start-Sleep -Seconds 1
-
-            # Get the role of the user
-            $current_role = Find-UserRoleInTeam -user_id "$($team_members_id[$i])" -team_id $team_id
-
-            $try++
-
-            if ($current_role -eq $target_role -and $try -eq 3) { # 3 tries to avoid API throttling
-                Write-Host "Role of User: $($team_members_email[$i]) changed: ($old_role -> $target_role)" -ForegroundColor Cyan
-                $role_not_changed = $false
-            }
-            if ($try -eq $max_try) {
-                if ($current_role -ne $target_role) { # Error
-                    Write-Host "Too many try to change role of User: $($team_members_email[$i]) changed: ($current_role -> $target_role)" -ForegroundColor Red
+            if ($array_user_email -contains $mg_user.UserPrincipalName) {
+                $member_map[$mg_user.UserPrincipalName] = @{
+                    Id = $mg_member.Id
+                    Current_role = (Find-UserRoleInTeam -user_id $mg_member.Id -team_id $team_id)
                 }
-                $role_not_changed = $false
             }
-        } while ($role_not_changed)
+        }
+
+        # Verify all requested users were found
+        $not_found_users = $array_user_email | Where-Object { -not $member_map.ContainsKey($_) }
+        foreach ($email in $not_found_users) {
+            Write-Host "User not found in team: $email" -ForegroundColor Red
+        }
+
+        # Process role changes
+        foreach ($email in $array_user_email) {
+            if (-not $member_map.ContainsKey($email)) { continue }
+            
+            $member_info = $member_map[$email]
+            
+            # Skip if already has desired role
+            if ($member_info.Current_role -eq $target_role) {
+                Write-Host "User $email already has role: $target_role" -ForegroundColor Yellow
+                continue
+            }
+
+            # Prepare request body
+            $request_body = @{
+                "@odata.type" = "#microsoft.graph.aadUserConversationMember"
+                "user@odata.bind" = "https://graph.microsoft.com/v1.0/users('$email')"
+                "roles" = switch ($target_role) {
+                    "member" { @() }
+                    "owner" { @("owner") }
+                    "guest" { @("guest") }
+                }
+            }
+
+            # Implement retry logic with exponential backoff
+            $max_attempts = 5
+            $attempt = 0
+            $delay = 2
+            $success = $false
+
+            while ($attempt -lt $max_attempts -and -not $success) {
+                try {
+                    $null = New-MgTeamMember -TeamId $team_id -BodyParameter $request_body
+                    Start-Sleep -Seconds 2 # Allow time for change to propagate
+                    
+                    $new_role = Find-UserRoleInTeam -user_id $member_info.Id -team_id $team_id
+                    if ($new_role -eq $target_role) {
+                        Write-Host "Successfully changed role for $($email): $($member_info.Current_role) -> $target_role" -ForegroundColor Green
+                        $success = $true
+                    }
+                }
+                catch {
+                    $attempt++
+                    if ($attempt -lt $max_attempts) {
+                        Write-Host "Attempt $attempt failed for $email. Retrying in $delay seconds..." -ForegroundColor Yellow
+                        Start-Sleep -Seconds $delay
+                        $delay *= 2
+                    }
+                    else {
+                        Write-Host "Failed to change role for $email after $max_attempts attempts: $($_.Exception.Message)" -ForegroundColor Red
+                    }
+                }
+            }
+        }
     }
-}
 
-END {}
+    END {}
 }
-
 
 function Add-OwnersToTeam {
 	<#
@@ -427,47 +358,62 @@ END {}
 function Find-UserInOrganization {
     [CmdletBinding()]
     param (
+        [Parameter(Mandatory=$true)]
         [string]$user_email_or_name
     )
     
-BEGIN {
-    # Trim and convert to lowercase for comparison
-    $search_term = $user_email_or_name.Trim().ToLower()
-}
+    BEGIN {
+        # Handle null/empty input
+        if ([string]::IsNullOrWhiteSpace($user_email_or_name)) {
+            Write-Warning "Empty or null search term provided"
+            return $null
+        }
+        # Trim and convert to lowercase for comparison
+        $search_term = $user_email_or_name.Trim().ToLower()
+    }
 
-PROCESS {
-    $mg_list_all_users = Get-MgUser -Property "Id,UserPrincipalName,DisplayName"
-    
-    # Check if the email exist in the organization
-    foreach ($mg_user in $mg_list_all_users){
+    PROCESS {
+        try {
+            # Use server-side filtering to improve performance
+            $filter = "startsWith(userPrincipalName,'$search_term') or startsWith(displayName,'$search_term')"
+            $mg_list_all_users = Get-MgUser -Filter $filter -Property "Id,UserPrincipalName,DisplayName" -ErrorAction Stop
+            
+            # Check for exact match first
+            $exact_match = $mg_list_all_users | Where-Object { 
+                ($_.UserPrincipalName -and $_.UserPrincipalName.ToLower() -eq $search_term) -or 
+                ($_.DisplayName -and $_.DisplayName.ToLower() -eq $search_term) 
+            } | Select-Object -First 1
+
+            if ($exact_match) {
+                return [PSCustomObject]@{
+                    id = $exact_match.Id
+                    email = $exact_match.UserPrincipalName
+                    name = $exact_match.DisplayName
+                }
+            }
+
+            # If no exact match, check for partial matches
+            $partial_match = $mg_list_all_users | Where-Object { 
+                ($_.DisplayName -and $_.DisplayName.ToLower().Contains($search_term))
+            } | Select-Object -First 1
+
+            if ($partial_match) {
+                Write-Host "Found partial match: $($partial_match.DisplayName)" -ForegroundColor Yellow
+                return [PSCustomObject]@{
+                    id = $partial_match.Id
+                    email = $partial_match.UserPrincipalName
+                    name = $partial_match.DisplayName
+                }
+            }
+        }
+        catch {
+            Write-Error "Error searching for user: $_"
+        }
         
-        if ($mg_user.UserPrincipalName.ToLower() -eq $search_term -or 
-            $mg_user.DisplayName.ToLower() -eq $search_term) {
-
-            return [PSCustomObject]@{
-                id = $mg_user.Id
-                email = $mg_user.UserPrincipalName
-                name = $mg_user.DisplayName
-            }
-        }
+        return $null
     }
 
-    # If exact match fails, try partial match on DisplayName
-    foreach ($mg_user in $mg_list_all_users){
-        if ($mg_user.DisplayName.ToLower().Contains($search_term)) {
-            Write-Host "Found partial match: $($mg_user.DisplayName)" -ForegroundColor Yellow
-            return [PSCustomObject]@{
-                id = $mg_user.Id
-                email = $mg_user.UserPrincipalName
-                name = $mg_user.DisplayName
-            }
-        }
-    }
-    
-    return $null
-}
-
-END {}
+    END {}
 }
 
 
