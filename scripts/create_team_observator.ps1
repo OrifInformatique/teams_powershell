@@ -169,7 +169,8 @@ $list_owners = @(
 	"raphael.schmutz@sectioninformatique.ch",
 	"sven.kohler@sectioninformatique.ch",
 	"teresa.valente@sectioninformatique.ch",
-	"frederic.schmocker@sectioninformatique.ch"
+	"frederic.schmocker@sectioninformatique.ch",
+	"attila.kruzsely@sectioninformatique.ch"
 )
 	
 Add-OwnersToTeam -team_id $($mg_created_team.id) -array_user_email $list_owners
