@@ -222,8 +222,58 @@ PROCESS {
 
     [string[]]$added_member_email = Add-MembersToTeam -team_id $team_id -array_user_email $array_user_email
     Edit-UsersRole -team_id $team_id -array_user_email $added_member_email -target_role "owner"
+
+    # Add MSPS to Formateurs Channel
+    foreach ($user_email in $array_user_email) {
+            # Initial delay to avoid API throttling
+            Start-Sleep -Seconds 2
+
+            # Check if the User is part of the organization
+            $user_exist = Find-UserInOrganization -user_email_or_name $user_email 
+            if ($null -eq $user_exist) {
+                Write-Host "User: $user_email isn't part of the organization" -ForegroundColor Red
+                continue 
+            }
+
+            # Create Identity for the User 
+            Write-Host "Adding new Member: $user_email" -ForegroundColor Cyan
+            $request_body_new_member = @{
+                "@odata.type" = "#microsoft.graph.aadUserConversationMember"
+                roles = @()
+                "user@odata.bind" = "https://graph.microsoft.com/v1.0/users('$($user_email)')"
+            }
+
+            # Retry logic with exponential backoff
+            [bool]$success = $false
+            [int]$max_try = 5
+            [int]$try = 0
+            [int]$delay = 2
+
+            while ($try -lt $max_try -and -not $success) {
+                try {
+                    # Attempt to add the member
+                    $null = New-MgTeamChannelMember -TeamId $team_id -BodyParameter $request_body_new_member -ErrorAction Stop
+                    
+                    # Wait with exponential backoff
+                    Start-Sleep -Seconds $delay
+                    
+                }
+                catch {
+                    $try++
+                    if ($try -lt $max_try) {
+                        Write-Host "Attempt $try failed: $($_.Exception.Message)" -ForegroundColor Yellow
+                        $delay *= 2  # Exponential backoff
+                        Start-Sleep -Seconds $delay
+                    }
+                    else {
+                        Write-Host "Failed to add member to channel  after $max_try attempts: $user_email" -ForegroundColor Red
+                    }
+                }
+            }
+        }
+    }  
     
-}
+
 
 END {}
 }
