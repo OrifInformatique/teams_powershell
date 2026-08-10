@@ -136,13 +136,13 @@ New-MgTeamChannel -TeamId $($mg_created_team.id) -BodyParameter $request_body_pr
 # ######################### Add Tabs to Channels #########################
 try {
     $excel_path = Join-Path $PSScriptRoot "..\resources\_Modele_HoraireTeams.xlsx"
-    $channel_id = (Get-MgTeamChannel -TeamId $mg_created_team.id | Where-Object { $_.DisplayName -eq "Général" }).Id
+    $channel_id = (Get-MgTeamChannel -TeamId $mg_created_team.id | Where-Object { $_.DisplayName -eq "General" }).Id
     
-    $result = Add-ExcelTabToChannel `
-        -TeamId $mg_created_team.id `
-        -ChannelId $channel_id `
-        -ExcelFilePath $excel_path `
-        -TabName "Horaire"
+    #$result = Add-ExcelTabToChannel `
+    #    -TeamId $mg_created_team.id `
+    #    -ChannelId $channel_id `
+    #    -ExcelFilePath $excel_path `
+    #    -TabName "Horaire"
 
     if ($result) {
         Write-Host "Excel tab added successfully" -ForegroundColor Green
@@ -170,11 +170,19 @@ $list_owners = @(
 	"sven.kohler@sectioninformatique.ch",
 	"teresa.valente@sectioninformatique.ch",
 	"frederic.schmocker@sectioninformatique.ch",
-	"attila.kruezsely@sectioninformatique.ch"
+	"attila.kruezsely@sectioninformatique.ch",
+	"lucas.berrio@sectioninformatique.ch"
 )
 	
 Add-OwnersToTeam -team_id $($mg_created_team.id) -array_user_email $list_owners
 Add-MembersToTeam -team_id $($mg_created_team.id) -array_user_email $($mg_user.email)
+
+######################### Add User to common channel #########################
+#Get common team ID
+$teamAll = Get-MgGroup  -Filter "DisplayName eq '[Pomy] Tous'"  
+#add user to the team
+Add-MembersToTeam -team_id $($teamAll.Id) -array_user_email $($mg_user.email)
+
 
 
 ######################### End of the script #########################
