@@ -9,11 +9,11 @@ $path_module_teams_users = Join-Path $PSScriptRoot "..\modules\teams_users.psm1"
 $path_module_teams_planner = Join-Path $PSScriptRoot "..\modules\teams_planner.psm1"
 $path_module_teams_tabs = Join-Path $PSScriptRoot "..\modules\teams_tabs.psm1"
 
-Import-Module $path_module_checks
-Import-Module $path_module_module_manager
-Import-Module $path_module_teams_users
-Import-Module $path_module_teams_planner
-Import-Module $path_module_teams_tabs
+Import-Module $path_module_checks -Force
+Import-Module $path_module_module_manager -Force
+Import-Module $path_module_teams_users -Force
+Import-Module $path_module_teams_planner -Force
+Import-Module $path_module_teams_tabs -Force
 
 # Required modules for this script
 [string[]]$required_modules = @(
@@ -33,7 +33,7 @@ Install-RequiredModules -array_modules $missing_modules
 # Scopes limit permissions required
 [string]$scopes_global = "Directory.ReadWrite.All"
 [string]$scopes_group = "Group.ReadWrite.All"
-[string]$scopes_teams = "TeamSettings.Read.All", "TeamMember.ReadWriteNonOwnerRole.All", "TeamMember.ReadWrite.All"
+[string]$scopes_teams = "TeamSettings.Read.All", "TeamMember.ReadWriteNonOwnerRole.All", "TeamMember.ReadWrite.All", "ChannelMember.ReadWrite.All"
 [string]$scopes_planner = "Tasks.ReadWrite", "DeviceManagementApps.Read.All"
 [string]$scopes_files = "Files.ReadWrite.All"
 [string]$scopes_all = $scopes_global + " " + $scopes_group + " " + $scopes_teams + " " + $scopes_planner + " " + $scopes_files
@@ -144,9 +144,9 @@ try {
     #    -ExcelFilePath $excel_path `
     #    -TabName "Horaire"
 
-    if ($result) {
-        Write-Host "Excel tab added successfully" -ForegroundColor Green
-    }
+    #if ($result) {
+    #    Write-Host "Excel tab added successfully" -ForegroundColor Green
+    #}
 }
 catch {
     Write-Host "Failed to add Excel tab: $_" -ForegroundColor Red

@@ -249,13 +249,19 @@ PROCESS {
             [int]$try = 0
             [int]$delay = 2
 
+            #Get channel ID
+            $channel_formateur = Get-MgTeamChannel -TeamId $team_id -Filter "displayname eq 'Formateurs'" 
+            
+
+
             while ($try -lt $max_try -and -not $success) {
                 try {
                     # Attempt to add the member
-                    $null = New-MgTeamChannelMember -TeamId $team_id -BodyParameter $request_body_new_member -ErrorAction Stop
+                    $null = New-MgTeamChannelMember -TeamId $team_id -ChannelId $channel_formateur.Id -BodyParameter $request_body_new_member -ErrorAction Stop
                     
-                    # Wait with exponential backoff
-                    Start-Sleep -Seconds $delay
+                    # Wait (API Throttling)
+                    Start-Sleep -Seconds 2
+                    $success = $true
                     
                 }
                 catch {
