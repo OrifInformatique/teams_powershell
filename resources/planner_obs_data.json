@@ -105,7 +105,23 @@
             "checklist": [
                 
             ]
-        }
+        },
+		{
+			"title": "Introduction à l'IA",
+			"description": "Familiarité avec les outils et concepts IA. Développer un début d’esprit critique sur les technologies IA.",
+			"references": [
+				{
+					"url": "https://orifcloud.orif.ch/index.php/s/ogYqZdE3BoDPMMx",
+					"alias": "Introduction IA 1"
+				}
+			],
+			"checklist": [
+				"Quizz chapitre 1",
+				"Quizz chapitre 2",
+				"Quizz chapitre 3",
+				"Quizz chapitre 4"
+			]
+		}
     ],
     "Semaine 2 : Poste de travail": [
         {
@@ -224,7 +240,7 @@
             "description": "Installer une imprimante Wifi, des haut-parleurs Bluetooth et un scanner",
             "references": [
                 {
-                    "url": "https://orif.ch",
+                    "url": "https://orifcloud.orif.ch/index.php/s/wZcxrxoRjDyNZMW",
                     "alias": "Installation de périphérique"
                 }
             ],
