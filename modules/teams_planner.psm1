@@ -61,8 +61,8 @@ function New-OrifTasks{
     PROCESS {
 
         #Get configurations from JSON Files
-        $bucketsAndTasks = Get-Content -Raw $bucketsAndTasksJSON | ConvertFrom-Json
-        $globalSettings = Get-Content -Raw $settingsJSON | ConvertFrom-Json
+        $bucketsAndTasks = Get-Content -Encoding UTF8 $bucketsAndTasksJSON | ConvertFrom-Json
+        $globalSettings = Get-Content -Encoding UTF8 $settingsJSON | ConvertFrom-Json
 
         #Get user ID and Team
         $userName = "$($mg_user.name)"
