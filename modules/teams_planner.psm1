@@ -32,8 +32,6 @@ function Format-OdataUrl {
     }
 }
 
-
-
 function New-OrifTasks{
     <#
         .DESCRIPTION
@@ -109,7 +107,7 @@ function New-OrifTasks{
                 $taskDetails.Add("Description", $task.description)
                 $taskDetails.Add("PreviewType", $globalSettings.previewType)
 
-                #References (attachements)
+                #References (attachments)
                 $taskReferences = @{}
                 foreach ($reference in $task.references){
                     $ref = @{}
@@ -121,17 +119,23 @@ function New-OrifTasks{
                 }
                 $taskDetails.Add("references", $taskReferences)
 
-                #Checklist
-                $taskCheckList = @{}
+                $taskCheckList = [ordered]@{}
+                
+                $currentOrderHint = " !"
                
                 foreach ($check in $task.checklist) {
                     Write-Host "Add checklist:  $($check)" -ForegroundColor DarkCyan
-                    $chk = @{}
+                    
+                    $chk = [ordered]@{}
                     $chk.Add("@odata.type", "microsoft.graph.plannerChecklistItem")
                     $chk.Add('title', $check)
                     $chk.Add('isChecked', $false)
+                    $chk.Add('orderHint', $currentOrderHint) # Envoi de l'index strict à l'API
+                    
                     $checkId = New-Guid
                     $taskCheckList.Add($checkId.ToString(), $chk)
+
+                    $currentOrderHint += " !"
                 }
 
                 $taskDetails.Add("checklist", $taskCheckList)
