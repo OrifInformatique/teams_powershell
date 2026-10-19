@@ -119,18 +119,21 @@ function New-OrifTasks{
                 }
                 $taskDetails.Add("references", $taskReferences)
 
-                $taskCheckList = [ordered]@{}
-                
+               $taskCheckList = [ordered]@{}
+
                 $currentOrderHint = " !"
-               
-                foreach ($check in $task.checklist) {
+
+                $checklistArray = [array]$task.checklist
+                [array]::Reverse($checklistArray)
+
+                foreach ($check in $checklistArray) {
                     Write-Host "Add checklist:  $($check)" -ForegroundColor DarkCyan
                     
                     $chk = [ordered]@{}
                     $chk.Add("@odata.type", "microsoft.graph.plannerChecklistItem")
                     $chk.Add('title', $check)
                     $chk.Add('isChecked', $false)
-                    $chk.Add('orderHint', $currentOrderHint) # Envoi de l'index strict à l'API
+                    $chk.Add('orderHint', $currentOrderHint)
                     
                     $checkId = New-Guid
                     $taskCheckList.Add($checkId.ToString(), $chk)
