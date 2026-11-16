@@ -21,21 +21,6 @@
                 "Remplir le fichier d'auto-évaluation"
             ]
         },
-     	{
-            "title": "Modèle de document",
-            "description": "Créer un modèle de document Word selon les directives des consignes en pièce-jointe",
-            "references": [
-                {
-                    "url": "https://orifcloud.orif.ch/index.php/s/MAqjfZGYWtGJNFA",
-                    "alias": "Modèle de document"
-                }
-            ],
-            "checklist": [
-                "Créer le modèle",
-                "Enregistrer et valider le fonctionnement du modèle",
-				"Présenter le travail au formateur"
-            ]
-        },
         {
             "title": "Outlook",
             "description": "Utilisation de la boîte mail et du calendrier",
@@ -51,6 +36,21 @@
                 "Créer des rendez-vous dans le calendrier",
                 "Partager votre calendrier avec les formateurs et votre répondant-e social-e",
                 "Synchroniser votre bôite mail sur votre téléphone"
+            ]
+        },
+		{
+            "title": "Modèle de document",
+            "description": "Créer un modèle de document Word selon les directives des consignes en pièce-jointe",
+            "references": [
+                {
+                    "url": "https://orifcloud.orif.ch/index.php/s/MAqjfZGYWtGJNFA",
+                    "alias": "Modèle de document"
+                }
+            ],
+            "checklist": [
+                "Créer le modèle",
+                "Enregistrer et valider le fonctionnement du modèle",
+				"Présenter le travail au formateur"
             ]
         },
         {
